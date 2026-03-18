@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Heart, Minus, Plus, Star } from "lucide-react";
+import { Heart, Minus, Plus, Star, ZoomIn } from "lucide-react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/product/ProductCard";
