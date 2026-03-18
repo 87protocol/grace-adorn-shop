@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Youtube } from "lucide-react";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
