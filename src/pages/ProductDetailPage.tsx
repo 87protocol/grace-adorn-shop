@@ -172,8 +172,15 @@ export default function ProductDetailPage() {
               <button onClick={handleAddToCart} className="btn-luxury-primary flex-1">
                 Add to Bag
               </button>
-              <button className="btn-luxury-outline w-12 !px-0 flex items-center justify-center" aria-label="Add to wishlist">
-                <Heart className="w-4 h-4" />
+              <button
+                onClick={() => {
+                  if (product) toggleItem(product);
+                  toast({ title: wishlisted ? "Removed from wishlist" : "Added to wishlist" });
+                }}
+                className={`btn-luxury-outline w-12 !px-0 flex items-center justify-center ${wishlisted ? "border-primary" : ""}`}
+                aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart className={`w-4 h-4 ${wishlisted ? "fill-primary text-primary" : ""}`} />
               </button>
             </div>
 
