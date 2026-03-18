@@ -6,6 +6,7 @@ import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/product/ProductCard";
 import { getProductBySlug, products, formatPrice } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ProductDetailPage() {
