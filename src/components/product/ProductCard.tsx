@@ -2,12 +2,16 @@ import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import type { Product } from "@/data/products";
 import { formatPrice } from "@/data/products";
+import { useWishlist } from "@/context/WishlistContext";
 
 interface Props {
   product: Product;
 }
 
 export default function ProductCard({ product }: Props) {
+  const { toggleItem, isInWishlist } = useWishlist();
+  const wishlisted = isInWishlist(product.id);
+
   return (
     <Link to={`/product/${product.slug}`} className="group block">
       <div className="image-hover-zoom relative aspect-[3/4] bg-secondary mb-4">
@@ -21,11 +25,14 @@ export default function ProductCard({ product }: Props) {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            toggleItem(product);
           }}
-          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 hover:bg-background"
-          aria-label="Add to wishlist"
+          className={`absolute top-4 right-4 w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-500 hover:bg-background ${
+            wishlisted ? "bg-primary/10 opacity-100" : "bg-background/80 opacity-0 group-hover:opacity-100"
+          }`}
+          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
         >
-          <Heart className="w-4 h-4" />
+          <Heart className={`w-4 h-4 transition-colors ${wishlisted ? "fill-primary text-primary" : ""}`} />
         </button>
         {product.isNew && (
           <span className="absolute top-4 left-4 font-body text-[10px] tracking-[0.2em] uppercase bg-primary text-primary-foreground px-3 py-1">

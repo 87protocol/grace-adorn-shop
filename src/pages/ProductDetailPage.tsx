@@ -6,14 +6,17 @@ import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/product/ProductCard";
 import { getProductBySlug, products, formatPrice } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const product = getProductBySlug(slug || "");
   const { addItem } = useCart();
+  const { toggleItem, isInWishlist } = useWishlist();
   const { toast } = useToast();
   const [selectedSize, setSelectedSize] = useState("");
+  const wishlisted = product ? isInWishlist(product.id) : false;
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
@@ -169,8 +172,15 @@ export default function ProductDetailPage() {
               <button onClick={handleAddToCart} className="btn-luxury-primary flex-1">
                 Add to Bag
               </button>
-              <button className="btn-luxury-outline w-12 !px-0 flex items-center justify-center" aria-label="Add to wishlist">
-                <Heart className="w-4 h-4" />
+              <button
+                onClick={() => {
+                  if (product) toggleItem(product);
+                  toast({ title: wishlisted ? "Removed from wishlist" : "Added to wishlist" });
+                }}
+                className={`btn-luxury-outline w-12 !px-0 flex items-center justify-center ${wishlisted ? "border-primary" : ""}`}
+                aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart className={`w-4 h-4 ${wishlisted ? "fill-primary text-primary" : ""}`} />
               </button>
             </div>
 

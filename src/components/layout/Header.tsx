@@ -3,8 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Heart, ShoppingBag, User, Menu } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import MegaMenu from "./MegaMenu";
 import MobileDrawer from "./MobileDrawer";
+import SearchOverlay from "./SearchOverlay";
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -16,14 +18,18 @@ const navLinks = [
 
 export default function Header() {
   const { totalItems } = useCart();
+  const { totalItems: wishlistCount } = useWishlist();
   const location = useLocation();
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const currentPath = location.pathname + location.search;
 
   const isActive = (to: string) => {
     if (to === "/") return location.pathname === "/";
-    if (to.includes("?")) return location.pathname + location.search === to;
-    return location.pathname.startsWith(to);
+    if (to.includes("?")) return currentPath === to;
+    return location.pathname === to;
   };
 
   return (
@@ -47,14 +53,24 @@ export default function Header() {
               {navLinks.map((link) => (
                 <div key={link.label} className="relative">
                   {link.hasMega ? (
-                    <button
+                    <Link
+                      to={link.to}
                       onMouseEnter={() => setMegaMenuOpen(true)}
-                      onClick={() => setMegaMenuOpen(!megaMenuOpen)}
-                      className="relative px-5 py-2 font-body text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 hover:text-primary group"
+                      className={`relative px-5 py-2 font-body text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 group ${
+                        isActive(link.to) ? "text-primary" : "hover:text-primary"
+                      }`}
                     >
                       {link.label}
-                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1.5px] bg-primary transition-all duration-500 group-hover:w-3/4" />
-                    </button>
+                      {isActive(link.to) ? (
+                        <motion.span
+                          layoutId="nav-underline"
+                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[1.5px] bg-primary"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      ) : (
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1.5px] bg-primary transition-all duration-500 group-hover:w-3/4" />
+                      )}
+                    </Link>
                   ) : (
                     <Link
                       to={link.to}
@@ -79,18 +95,31 @@ export default function Header() {
             </nav>
 
             <div className="flex items-center gap-4 md:gap-5">
-              {[
-                { icon: Search, label: "Search", hideOnMobile: true },
-                { icon: Heart, label: "Wishlist", hideOnMobile: true },
-              ].map(({ icon: Icon, label, hideOnMobile }) => (
-                <button
-                  key={label}
-                  aria-label={label}
-                  className={`${hideOnMobile ? "hidden md:flex" : "flex"} items-center justify-center w-9 h-9 rounded-full hover:bg-secondary transition-all duration-300 hover:text-primary`}
-                >
-                  <Icon className="w-[17px] h-[17px]" />
-                </button>
-              ))}
+              <button
+                onClick={() => setSearchOpen(true)}
+                aria-label="Search"
+                className="hidden md:flex items-center justify-center w-9 h-9 rounded-full hover:bg-secondary transition-all duration-300 hover:text-primary"
+              >
+                <Search className="w-[17px] h-[17px]" />
+              </button>
+              <Link
+                to="/wishlist"
+                className="hidden md:flex relative items-center justify-center w-9 h-9 rounded-full hover:bg-secondary transition-all duration-300 hover:text-primary"
+              >
+                <Heart className="w-[17px] h-[17px]" />
+                <AnimatePresence>
+                  {wishlistCount > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] font-body font-medium flex items-center justify-center"
+                    >
+                      {wishlistCount}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Link>
               <Link
                 to="/cart"
                 className="relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-secondary transition-all duration-300 hover:text-primary"
@@ -135,6 +164,7 @@ export default function Header() {
       </header>
 
       <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }
