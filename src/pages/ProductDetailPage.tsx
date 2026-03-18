@@ -13,8 +13,10 @@ export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const product = getProductBySlug(slug || "");
   const { addItem } = useCart();
+  const { toggleItem, isInWishlist } = useWishlist();
   const { toast } = useToast();
   const [selectedSize, setSelectedSize] = useState("");
+  const wishlisted = product ? isInWishlist(product.id) : false;
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
