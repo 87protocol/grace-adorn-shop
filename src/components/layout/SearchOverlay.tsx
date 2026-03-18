@@ -54,7 +54,7 @@ export default function SearchOverlay({ open, onClose }: Props) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[70] bg-background/98 backdrop-blur-md"
+          className="fixed inset-0 z-[100] bg-background backdrop-blur-md overflow-y-auto"
         >
           <div className="section-padding pt-8">
             <div className="flex items-center justify-between mb-8">

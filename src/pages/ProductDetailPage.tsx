@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Heart, Minus, Plus, Star } from "lucide-react";
+import { Heart, Minus, Plus, Star, ZoomIn } from "lucide-react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/product/ProductCard";
@@ -19,6 +19,17 @@ export default function ProductDetailPage() {
   const wishlisted = product ? isInWishlist(product.id) : false;
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!imageContainerRef.current) return;
+    const rect = imageContainerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPosition({ x, y });
+  };
 
   if (!product) {
     return (
@@ -64,17 +75,29 @@ export default function ProductDetailPage() {
           {/* Images */}
           <div className="space-y-4">
             <motion.div
+              ref={imageContainerRef}
               key={selectedImage}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="aspect-[3/4] bg-secondary"
+              className="aspect-[3/4] bg-secondary relative overflow-hidden cursor-zoom-in group"
+              onMouseEnter={() => setIsZoomed(true)}
+              onMouseLeave={() => setIsZoomed(false)}
+              onMouseMove={handleMouseMove}
+              onClick={() => setIsZoomed(!isZoomed)}
             >
               <img
                 src={product.images[selectedImage]}
                 alt={product.name}
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-top transition-transform duration-300"
+                style={isZoomed ? {
+                  transform: "scale(2.5)",
+                  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                } : {}}
               />
+              <div className={`absolute bottom-4 right-4 bg-background/80 backdrop-blur-sm rounded-full p-2 transition-opacity duration-300 ${isZoomed ? 'opacity-0' : 'opacity-100 group-hover:opacity-100 md:opacity-0'}`}>
+                <ZoomIn className="w-4 h-4 text-foreground" />
+              </div>
             </motion.div>
             {product.images.length > 1 && (
               <div className="flex gap-3">

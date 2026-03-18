@@ -56,38 +56,24 @@ export default function Header() {
                     <Link
                       to={link.to}
                       onMouseEnter={() => setMegaMenuOpen(true)}
-                      className={`relative px-5 py-2 font-body text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 group ${
-                        isActive(link.to) ? "text-primary" : "hover:text-primary"
+                      className={`relative px-5 py-2 font-body text-[11px] tracking-[0.2em] uppercase transition-all duration-300 ${
+                        isActive(link.to)
+                          ? "text-primary font-semibold"
+                          : "text-foreground/70 hover:text-primary"
                       }`}
                     >
                       {link.label}
-                      {isActive(link.to) ? (
-                        <motion.span
-                          layoutId="nav-underline"
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[1.5px] bg-primary"
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                        />
-                      ) : (
-                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1.5px] bg-primary transition-all duration-500 group-hover:w-3/4" />
-                      )}
                     </Link>
                   ) : (
                     <Link
                       to={link.to}
-                      className={`relative px-5 py-2 font-body text-[11px] tracking-[0.2em] uppercase transition-colors duration-500 group ${
-                        isActive(link.to) ? "text-primary" : "hover:text-primary"
+                      className={`relative px-5 py-2 font-body text-[11px] tracking-[0.2em] uppercase transition-all duration-300 ${
+                        isActive(link.to)
+                          ? "text-primary font-semibold"
+                          : "text-foreground/70 hover:text-primary"
                       }`}
                     >
                       {link.label}
-                      {isActive(link.to) ? (
-                        <motion.span
-                          layoutId="nav-underline"
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[1.5px] bg-primary"
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                        />
-                      ) : (
-                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1.5px] bg-primary transition-all duration-500 group-hover:w-3/4" />
-                      )}
                     </Link>
                   )}
                 </div>
